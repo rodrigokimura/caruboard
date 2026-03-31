@@ -1,0 +1,20 @@
+[project]
+name = "caruboard"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[dependency-groups]
+manager = ["circup", "rshell", "adafruit-ampy"]
+dev = [
+  "ty",
+  "commitizen",
+  "pytest",
+  "pytest-cov",
+  "circuitpython-stubs",
+  "circuitpython-button-handler",
+  "types-circuitpython",
+  "adafruit-circuitpython-hid",
+]
