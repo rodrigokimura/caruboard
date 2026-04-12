@@ -1,7 +1,9 @@
 import time
 
 import board
+import digitalio
 import keypad
+import neopixel
 import usb_hid
 from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.keycode import Keycode as KC
@@ -22,7 +24,7 @@ def get_cb(func: Callable[[int, Action], None], key_number: int, action: Action)
     return cb
 
 
-KEYS: list[dict[str, list[int]]] = [
+KEYS: list[dict[Action, list[int]]] = [
     {
         "S": [],
         "D": [],
@@ -69,15 +71,56 @@ KEYS: list[dict[str, list[int]]] = [
         "H": [],
     },
 ]
+COLORS: list[str] = [
+    "#e3342f",
+    "#f6993f",
+    "#ffed4a",
+    "#38c172",
+    "#4dc0b5",
+    "#3490dc",
+    "#6574cd",
+    "#9561e2",
+    "#f66d9b",
+]
 KB = Keyboard(usb_hid.devices)
+LED = digitalio.DigitalInOut(getattr(board, "LED"))
+LED.direction = digitalio.Direction.OUTPUT
+LED.value = False
+PIXELS = neopixel.NeoPixel(
+    getattr(board, "GP23"),
+    1,
+    brightness=0.1,
+)
 
 
-def cb(key: int, action: Literal["S", "D", "H"]) -> None:
+def cb(key: int, action: Action) -> None:
     print(f"{action} on key {key}")
+    LED.value = True
     KB.send(*KEYS[key].get(action, []))
+    LED.value = False
+    PIXELS.fill(parse_color(COLORS[key]))
 
 
-def main() -> None:
+def parse_color(
+    color: str | list[int | str] | tuple[int | str, int | str, int | str],
+) -> tuple[int, int, int]:
+    if isinstance(color, str):
+        if color[0] == "#":
+            color = color[1:]
+        if len(color) != 6:
+            raise ValueError("Invalid color")
+        r = color[:2]
+        g = color[2:4]
+        b = color[4:]
+        return int(r, 16), int(g, 16), int(b, 16)
+
+    if isinstance(color, (list, tuple)):
+        return int(color[0]), int(color[1]), int(color[2])
+
+    raise NotImplementedError
+
+
+def setup() -> ButtonHandler:
     keys = keypad.Keys(
         (
             getattr(board, "GP29"),
@@ -95,12 +138,22 @@ def main() -> None:
     )
 
     callbacks: set[ButtonInput] = set()
+    actions: dict[Action, int | str] = {
+        "D": ButtonInput.DOUBLE_PRESS,
+        "S": ButtonInput.SHORT_PRESS,
+        "H": ButtonInput.HOLD,
+    }
     for n in range(keys.key_count):
-        callbacks.add(ButtonInput(ButtonInput.DOUBLE_PRESS, n, get_cb(cb, n, "D")))
-        callbacks.add(ButtonInput(ButtonInput.SHORT_PRESS, n, get_cb(cb, n, "S")))
-        callbacks.add(ButtonInput(ButtonInput.HOLD, n, get_cb(cb, n, "H")))
+        key = KEYS[n]
+        for code, action in actions.items():
+            if code in key:
+                callbacks.add(ButtonInput(action, n, get_cb(cb, n, code)))
 
-    handler = ButtonHandler(keys.events, callbacks, keys.key_count)
+    return ButtonHandler(keys.events, callbacks, keys.key_count)
+
+
+def main() -> None:
+    handler = setup()
 
     while True:
         handler.update()

@@ -71,6 +71,31 @@ wheels = [
 ]
 
 [[package]]
+name = "adafruit-circuitpython-neopixel"
+version = "6.4.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "adafruit-blinka" },
+    { name = "adafruit-circuitpython-pixelbuf" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d0/af/e7f9d219c5dc38ce97398faf70faf1f9596b3367183cb2cd3da2325381e5/adafruit_circuitpython_neopixel-6.4.1.tar.gz", hash = "sha256:df2caebfd1c413ff7dd290e5addb796585ab317d2a7526963c8ed21f9f9aeb9a", size = 25880, upload-time = "2026-03-27T19:02:25.045Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6e/56/17f9be2b56f8f570dd88f7142628d7d48a5c1628fc06a9809daf19527a4e/adafruit_circuitpython_neopixel-6.4.1-py3-none-any.whl", hash = "sha256:f701977b51f3a3adfce57c54fb2c291d6bd3719529484217798deae1cae9d4f2", size = 6503, upload-time = "2026-03-27T19:02:23.693Z" },
+]
+
+[[package]]
+name = "adafruit-circuitpython-pixelbuf"
+version = "2.0.11"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "adafruit-blinka" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8a/24/d36404272865d5ba84c676f1f2507c45bc37612cd42cfa34fbfde32d1fe1/adafruit_circuitpython_pixelbuf-2.0.11.tar.gz", hash = "sha256:cdc6cb886d20587dcf8148481ba777c743ea54ef91630fe32d6537567cd069e1", size = 24775, upload-time = "2026-03-27T19:12:02.522Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e8/dd/e67a32442b5f59b12a6d7fc3114e0a2e2269eedc6f416facc91438b63891/adafruit_circuitpython_pixelbuf-2.0.11-py3-none-any.whl", hash = "sha256:2a0e5f8f97b928ce510c547cca54e44bd5c5b8d57bcd71838586e91831ac2a31", size = 6977, upload-time = "2026-03-27T19:12:00.967Z" },
+]
+
+[[package]]
 name = "adafruit-circuitpython-requests"
 version = "4.1.16"
 source = { registry = "https://pypi.org/simple" }
@@ -150,6 +175,9 @@ wheels = [
 name = "caruboard"
 version = "0.1.0"
 source = { virtual = "." }
+dependencies = [
+    { name = "adafruit-circuitpython-neopixel" },
+]
 
 [package.dev-dependencies]
 dev = [
@@ -169,6 +197,7 @@ manager = [
 ]
 
 [package.metadata]
+requires-dist = [{ name = "adafruit-circuitpython-neopixel", specifier = ">=6.4.1" }]
 
 [package.metadata.requires-dev]
 dev = [

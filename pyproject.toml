@@ -17,4 +17,5 @@ dev = [
   "circuitpython-button-handler",
   "types-circuitpython",
   "adafruit-circuitpython-hid",
+  "adafruit-circuitpython-neopixel>=6.4.1",
 ]
